@@ -1,0 +1,122 @@
+PYTHON FILE INPUT/OUTPUT ASSIGNMENT
+Student Name: KIBUCHI MAINA
+Admission Number: 202617998
+Course : A.P.T 
+
+
+PART A: CONCEPTS
+
+
+Q1. Difference between "r", "w", "a" and "x" file modes
+
+- "r" (read mode): Opens an existing file for reading only. If the file
+  does not exist, Python raises FileNotFoundError. Writing is not allowed.
+
+- "w" (write mode): Opens a file for writing. If the file exists, its
+  previous contents are truncated (erased) before writing begins. If the
+  file does not exist, it is created.
+
+- "a" (append mode): Opens a file for writing, but new data is added to
+  the end without erasing existing content. If the file does not exist,
+  it is created.
+
+- "x" (exclusive creation mode): Creates a new file and opens it for
+  writing. If the file already exists, Python raises FileExistsError.
+  Useful when you want to avoid accidentally overwriting a file.
+
+Q2. Why "with open(...) as f:" is preferred over open() and close()
+
+The with statement guarantees that the file is closed automatically when
+the block exits, even if an exception occurs inside the block. This
+prevents resource leaks and ensures buffered data is flushed to disk.
+Doing it manually requires a try/finally structure to be equally safe,
+which is more verbose and easy to forget.
+
+Q3. Why three f.write(name) calls produce one line, and the fix
+
+f.write() writes exactly the string it is given; it does not add a
+newline character. Consecutive calls therefore concatenate the names on
+one line. The fix is to add "\n" to each write call:
+
+    f.write(name + "\n")
+
+or equivalently:
+
+    f.write(f"{name}\n")
+
+----
+PART C3: REFLECTION
+----
+One limitation of storing the canteen's sales in a text file is that
+plain text has no structure enforcement or integrity checks, so mistakes
+like a missing field or a non-numeric quantity can slip in silently and
+require custom validation code. Text files also become slow to search,
+hard to update in place, and unsafe when several people or programs write
+at the same time. The canteen should move to a database (e.g., SQLite)
+when the number of daily sales grows large, when multiple staff need to
+record or query sales simultaneously, or when it needs reliable
+reporting, backups and transaction safety.
+
+------------------------------------------------------------
+PART B5 EVIDENCE: ADDING A NEW SALE
+------------------------------------------------------------
+
+Before adding (original sales.txt, 13 lines):
+Console output:
+  Accepted records : 9
+  Rejected records : 2
+  Total quantity   : 160
+  Total revenue    : KES 3,230
+
+report.txt (Tea row):
+  Tea          52            780
+
+Call:
+  add_sale("sales.txt", "2026-11-05", "Tea", 25, 15)
+
+sales.txt now ends with:
+  2026-11-05,Tea,25,15
+
+After adding (14 lines, run again):
+Console output:
+  Accepted records : 10
+  Rejected records : 2
+  Total quantity   : 185
+  Total revenue    : KES 3,605
+
+report.txt (Tea row):
+  Tea          77          1,155
+
+The report changed from Tea qty 52 / revenue 780 to Tea qty 77 /
+revenue 1,155, proving the append worked without erasing old data.
+
+------------------------------------------------------------
+PART C1 EVIDENCE: MISSING FILE
+------------------------------------------------------------
+Command:
+  mv sales.txt sales_backup.txt
+  python canteen.py
+
+Console output:
+  Error: The file 'sales.txt' was not found. Please make sure it is in
+  the current directory.
+
+(No traceback was printed.)
+
+Restore:
+  mv sales_backup.txt sales.txt
+
+------------------------------------------------------------
+PART C2 EVIDENCE: tell() AND seek()
+------------------------------------------------------------
+Console output from file_position_demo():
+
+  Header: 'date,item,qty,unit_price'
+  tell() after header: 25
+  Total lines (including header and blanks): 14
+
+Explanation:
+  f.readline() reads the header line (24 characters + 1 newline = 25
+  bytes), so tell() returns 25. f.seek(0) moves the read pointer back to
+  the start, and the loop counts all 14 physical lines in the final
+  sales.txt, including the blank line and the header.

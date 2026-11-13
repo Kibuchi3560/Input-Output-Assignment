@@ -1,0 +1,7 @@
+CAMPUS CANTEEN - SALES REPORT
+Item        Qty  Revenue (KES)
+Beans        18          1,080
+Chapati      47            940
+Mandazi      43            430
+Tea          77          1,155
+TOTAL       185          3,605
